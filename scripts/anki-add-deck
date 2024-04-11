@@ -1,0 +1,27 @@
+#!/usr/bin/ruby
+# Adds a new note file with a predefined set of Anki headers.
+
+# todo: add explanation how to set this.
+notes_dir = ENV['GREASE_NOTES']
+
+puts "Please enter the new deck name."
+# todo: check tsv file name.
+# Interactive, because escaping hierarchical deck names (a::b::c) is annoying
+name = STDIN.gets
+path = notes_dir+"/"+ARGV[0]
+deck = File.open(path, 'w')
+
+# first column contains guids.
+deck.puts '#guid column:1'
+# notes are stored in tsv files
+deck.puts '#separator:Tab'
+# the deck name from above. 
+deck.puts "#deck:#{name}"
+# enable html formatting
+deck.puts '#html:true'
+# I mostly use simple notes (question, answer), but to create other notes, simply enumerate the fields in the correct order in the tsv.
+deck.puts '#notetype:Basic'
+# instructions for editing the new deck. 
+deck.puts '#place cards directly under this line and put a "." in the first column.'
+
+deck.close
