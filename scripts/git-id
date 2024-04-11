@@ -1,0 +1,31 @@
+#!/usr/bin/ruby
+
+# Script for setting repository-local git identity information. 
+# TODO exit gracefully when pwd is not a repository 
+
+id_file_dir = ENV['GREASE_CONF']
+if id_file_dir.nil? 
+	id_file = "#{Dir.home}/.config/grease/git_identities"
+else
+	id_file = id_file_dir + "git_identities"
+end
+if not File.file? id_file
+	STDERR.puts "git_identities file does not exist. Configuration NOT updated."
+	STDERR.puts "Please setup identities here:  #{id_file}"
+	exit 1
+end	
+IO.readlines(id_file, chomp:true).each do |line|
+	id, name, email = line.split("\t")
+	if ARGV[0] == id
+		if(name.nil? || email.nil?)
+			STDERR.puts "identity is missing information. Configuration NOT updated. Please check your id file: #{id_file}"
+			exit 1
+		end
+
+		system("git config user.name " + name)
+		system("git config user.email " + email);
+		exit 0
+	end
+end
+STDERR.puts "identity not found #{ARGV[0]}. Configuration NOT updated."
+exit 1

@@ -1,0 +1,8 @@
+#!/usr/bin/ruby
+target_dir=Dir.home + "/.local/bin"
+puts target_dir
+Dir[Dir.pwd+"/scripts/*"].each do |s|
+	f = s.split('/').last
+	target = target_dir + "/" + f
+	system("ln -i -s #{s} #{target}")
+end
