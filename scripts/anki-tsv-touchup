@@ -1,16 +1,25 @@
 #!/usr/bin/ruby
+# This script updates tsv files with anki flashcard content with uuids.
+# It takes filename arguments, and for each file, overwrites a placeholder(.)
+# at the beginning of each row with a fresh UUID. Input files should be put
+# into a version control system or be backed up in some other way.
 
-require 'securerandom' 
+require 'securerandom'
 
 ARGV.select{|a| a.end_with? ".tsv"}.each do |tsv_file|
-	tmp_file = tsv_file+".new"
-	new = File.new (tmp_file mode='w')
+	if File.directory? tsv_file
+		#puts "Ignore directory "+tsv_file
+		next
+	end
+	tmp_file_path = tsv_file + ".new"
+	#puts tmp_file_path
+	tmp_file = File.new tmp_file_path, 'w'
 	File.readlines(tsv_file).each do |line|
 		uuid = SecureRandom.uuid
 		line = line.sub /^\./,  uuid
-		new.puts line
+		tmp_file.puts line
 	end
-	new.close
-	echo "delete #{tsv_file}"
-	File.rename new tsv_file
+	tmp_file.close
+	# rename will overwrite existing files just fine, apparently.
+	File.rename tmp_file_path, tsv_file
 end
