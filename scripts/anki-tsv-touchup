@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+require 'securerandom' 
+
+ARGV.select{|a| a.end_with? ".tsv"}.each do |tsv_file|
+	tmp_file = tsv_file+".new"
+	new = File.new (tmp_file mode='w')
+	File.readlines(tsv_file).each do |line|
+		uuid = SecureRandom.uuid
+		line = line.sub /^\./,  uuid
+		new.puts line
+	end
+	new.close
+	echo "delete #{tsv_file}"
+	File.rename new tsv_file
+end
